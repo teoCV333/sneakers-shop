@@ -1,0 +1,12 @@
+const mongoose = require('mongoose');
+
+const BrandSchema = mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+    }
+});
+
+const Brand = mongoose.model('Brand', BrandSchema);
+
+module.exports = Brand;
