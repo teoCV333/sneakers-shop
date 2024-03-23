@@ -3,7 +3,7 @@ const userService = require('./user.service');
 
 const validatePrice = async (userId, productName) => {
     try {
-        const [user] = await userService.getUserById(userId);
+        const user = await userService.getUserById(userId);
         if (!user) {
             throw new Error(`User with ID ${userId} not found`);
         }
@@ -14,6 +14,7 @@ const validatePrice = async (userId, productName) => {
         }
         
         const metadata = user.metadata?.precios_especiales || [];
+
         let price = product[0].basePrice;
 
         metadata.forEach(data => {
@@ -30,7 +31,7 @@ const validatePrice = async (userId, productName) => {
 
 const addSpecialPrice = async (userId, specialPriceData) => {
     try {
-        const [user] = await userService.getUserById(userId);
+        const user = await userService.getUserById(userId);
         if (!user) {
             throw new Error(`User with ID ${userId} not found`);
         }
@@ -59,7 +60,7 @@ const addSpecialPrice = async (userId, specialPriceData) => {
 
 const deleteSpecialPriceById = async (userId, productName) => {
     try {
-        const [user] = await userService.getUserById(userId);
+        const user = await userService.getUserById(userId);
         if (!user) {
             throw new Error(`User with ID ${userId} not found`);
         }

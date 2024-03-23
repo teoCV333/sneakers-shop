@@ -13,15 +13,12 @@ const PriceSchema = mongoose.Schema({
 });
 
 const UserSchema = mongoose.Schema({
-    id: {
-      type: Number,
-      required: true  
-    },
     nombre: {
         type: String,
         required: true
     },
     metadata: {
+        required: false,
         type: {
             precios_especiales: [PriceSchema]
         }
