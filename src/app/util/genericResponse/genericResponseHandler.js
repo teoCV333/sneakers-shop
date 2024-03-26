@@ -3,13 +3,11 @@ class GenericResponseHandler {
         const httpStatusMessage = message;
         const httpStatusCode = httpStatus;
         if (data && data.isError) {
-            // Si isError es verdadero, devolver solo el código de error y el mensaje
             return {
                 httpStatusCode,
                 httpStatusMessage
             };
         } else {
-            // Si isError no es verdadero, devolver el código de estado, el mensaje y los datos
             return {
                 httpStatusCode,
                 response: data,

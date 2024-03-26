@@ -1,4 +1,3 @@
-// userPrice.model.js
 const mongoose = require('mongoose');
 
 class User {

@@ -1,6 +1,5 @@
 const userService = require('../services/user.service');
 const GenericResponseHandler = require('../util/genericResponse/genericResponseHandler');
-const { returnResponse } = require('../util/genericResponse/genericResponseHandler');
 
 class UserController {
 
