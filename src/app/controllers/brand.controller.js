@@ -1,54 +1,47 @@
 const brandService = require('../services/brand.service');
+const GenericResponseHandler = require('../util/genericResponse/genericResponseHandler');
 
-const getAllBrands = async (req, res) => {
-    try {
-        const brands = await brandService.getAllBrands();
-        res.status(200).json(brands);
-    } catch (error) {
-        res.status(500).json({ message: error.message });        
+class BrandController {
+
+    constructor() {
+        this.responseHandler = new GenericResponseHandler();
     }
-}
 
-const getBrandByName = async (req, res) => {
-    try {
+    getAllBrands = async (req, res) => {
+        const data = await brandService.getAllBrands();
+        const response = await this.responseHandler.returnResponse(data);
+        res.status(response.httpStatusCode).json(response);
+    };
+
+    getBrandByName = async (req, res) => {
         const brandName = req.params.brandName;
-        const brand = await brandService.getBrandByName(brandName);
-        res.status(200).json(brand);
-    } catch (error) {
-        res.status(500).json({ message: error.message });        
-    }
-}
+        const data = await brandService.getBrandByName(brandName);
+        const response = await this.responseHandler.returnResponse(data);
+        res.status(response.httpStatusCode).json(response);
+    };
 
-const createBrand = async (req, res) => {
-    try {
+    createBrand = async (req, res) => {
         const brandData = req.body;
-        const newBrand = await brandService.createBrand(brandData);
-        res.status(201).json(newBrand);
-    } catch (error) {
-        res.status(500).json({ message: error.message });        
-    }
-}
+        const data = await brandService.createBrand(brandData);
+        const response = await this.responseHandler.returnResponse(data);
+        res.status(response.httpStatusCode).json(response);
+    };
 
-const updateBrand = async (req, res) => {
-    try {
+    updateBrand = async (req, res) => {
         const brandId = req.params.id;
         const brandData = req.body;
-        const updatedBrand = await brandService.updateBrand(brandId, brandData);
-        res.status(200).json(updatedBrand);
-    } catch (error) {
-        res.status(500).json({ message: error.message });        
-    }
-}
+        const data = await brandService.updateBrand(brandId, brandData);
+        const response = await this.responseHandler.returnResponse(data);
+        res.status(response.httpStatusCode).json(response);
+    };
 
-const deleteBrand = async (req, res) => {
-    try {
+    deleteBrand = async (req, res) => {
         const brandId = req.params.id;
-        const deletedBrand = await brandService.deleteBrand(brandId);
-        res.status(200).json(deletedBrand);
-    } catch (error) {
-        res.status(500).json({ message: error.message });        
-    }
+        const data = await brandService.deleteBrand(brandId);
+        const response = await this.responseHandler.returnResponse(data);
+        res.status(response.httpStatusCode).json(response);
+    };
+
 }
 
-
-module.exports = {getAllBrands, getBrandByName, createBrand, updateBrand, deleteBrand};
+module.exports = new BrandController();

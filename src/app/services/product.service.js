@@ -5,8 +5,8 @@ const Product = require('../models/product.model');
 class ProductService {
     getAllProducts = async () => {
         try {
-            const products = await Product.find({ inStock: true }).populate('brand');
-            if (!products) {
+            const products = await Product.Model.find({ inStock: true }).populate('brand');
+            if (!products || products.length == 0) {
                 return {
                     isError: false,
                     data: []
@@ -20,14 +20,14 @@ class ProductService {
             return {
                 isError: true,
                 codeError: 500,
-                message: "Internal server error"
+                message: `(ProductService): Internal server error: ${error}`
             };
         }
     };
 
     getProductByName = async (productName) => {
         try {
-            const product = await Product.findOne({ name: productName });
+            const product = await Product.Model.findOne({ name: productName });
             if (!product) {
                 return {
                     isError: true,
@@ -43,7 +43,7 @@ class ProductService {
             return {
                 isError: true,
                 codeError: 500,
-                message: `Internal server error ${error}`
+                message: `(ProductService): Internal server error ${error}`
             };
         }
     };
@@ -60,7 +60,7 @@ class ProductService {
                 return brandValidation;
             }
 
-            const newProduct = new Product(productData);
+            const newProduct = new Product.Model(productData);
             await newProduct.save();
             return {
                 isError: false,
@@ -70,14 +70,20 @@ class ProductService {
             return {
                 isError: true,
                 codeError: 500,
-                message: `Internal server error ${error}`
+                message: `(ProductService): Internal server error ${error}`
             };
         }
     };
 
     updateProduct = async (productId, productData) => {
         try {
-
+            if (!mongoose.Types.ObjectId.isValid(productId)) {
+                return {
+                    isError: true,
+                    codeError: 400,
+                    message: "Invalid brand ID format."
+                };
+            }
             if (productData.name) {
                 const productValidation = await this.validateProduct(productData.name);
                 if (productValidation.isError) {
@@ -93,7 +99,7 @@ class ProductService {
 
             }
 
-            const updatedProduct = await Product.findByIdAndUpdate(productId, productData, { new: true });
+            const updatedProduct = await Product.Model.findByIdAndUpdate(productId, productData, { new: true });
             if (!updatedProduct) {
                 return {
                     isError: true,
@@ -109,7 +115,7 @@ class ProductService {
             return {
                 isError: true,
                 codeError: 500,
-                message: `Internal server error ${error}`
+                message: `(ProductService): Internal server error ${error}`
             };
         }
     };
@@ -125,7 +131,7 @@ class ProductService {
                 };
             }
 
-            const deletedProduct = await Product.findByIdAndDelete(productId);
+            const deletedProduct = await Product.Model.findByIdAndDelete(productId);
             if (!deletedProduct) {
                 return {
                     isError: true,
@@ -141,18 +147,18 @@ class ProductService {
             return {
                 isError: true,
                 codeError: 500,
-                message: `Internal server error ${error}`
+                message: `(ProductService): Internal server error ${error}`
             };
         }
     };
 
     validateProduct = async (productName) => {
         try {
-            const existingProduct = await Product.findOne({ name: productName });
+            const existingProduct = await Product.Model.findOne({ name: productName });
             if (existingProduct) {
                 return {
                     isError: true,
-                    codeError: 404,
+                    codeError: 409,
                     message: "Product already exist."
                 };
             }
@@ -164,7 +170,7 @@ class ProductService {
             return {
                 isError: true,
                 codeError: 500,
-                message: `Internal server error ${error.message}`
+                message: `(ProductService): Internal server error ${error.message}`
             };
         }
     };
@@ -179,7 +185,7 @@ class ProductService {
                 };
             }
 
-            const existingBrand = await Brand.findById(brandId);
+            const existingBrand = await Brand.Model.findById(brandId);
             if (!existingBrand) {
                 return {
                     isError: true,
@@ -196,7 +202,7 @@ class ProductService {
             return {
                 isError: true,
                 codeError: 500,
-                message: `Internal server error ${error.message}`
+                message: `(ProductService): Internal server error ${error.message}`
             };
         }
     };

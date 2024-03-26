@@ -1,63 +1,124 @@
 const Brand = require('../models/brand.model');
 
-const getAllBrands = async () => {
-    try {
-        return await Brand.find();
-    } catch (error) {
-        throw new Error(error.message);
-    }
-}
+class BrandService {
 
-const getBrandByName = async (brandName) => {
-    try {
-        const regex = new RegExp(brandName, 'i');
-        return await Brand.find({ name: regex });
-    } catch (error) {
-        throw new Error(error.message);
-    }
-}
-
-const createBrand = async (brandData) => {
-    try {
-        const existingBrand = await Brand.findOne({ name: brandData.name });
-        if (existingBrand) {
-            throw new Error('A product with that name already exists in the database.');
+    getAllBrands = async () => {
+        try {
+            const brands = await Brand.Model.find();
+            if (!brands || brands.length == 0) {
+                return {
+                    isError: false,
+                    data: []
+                };
+            }
+            return {
+                isError: false,
+                data: brands
+            };
+        } catch (error) {
+            return {
+                isError: true,
+                codeError: 500,
+                message: `(BrandService): Internal server error: ${error}`
+            };
         }
-        const newBrand = new Brand(brandData);
-        return await newBrand.save();
-    } catch (error) {
-        throw new Error(error.message);
     }
-}
 
-const updateBrand = async (brandId, brandData) => {
-    try {
-        const updatedBrand = await Brand.findByIdAndUpdate(brandId, brandData, { new: true });
-        if (!updatedBrand) {
-            throw new Error('Brand not found');
+    getBrandByName = async (brandName) => {
+        try {
+            const regex = new RegExp(brandName, 'i');
+            const brand = await Brand.Model.findOne({ name: regex });
+            if (!brand) {
+                return {
+                    isError: true,
+                    codeError: 404,
+                    message: "Brand not found"
+                };
+            }
+            return {
+                isError: false,
+                data: brand
+            };
+        } catch (error) {
+            return {
+                isError: true,
+                codeError: 500,
+                message: `(BrandService): Internal server error: ${error}`
+            };
         }
-        return updatedBrand;
-    } catch (error) {
-        throw new Error(error.message);
     }
-}
 
-const deleteBrand = async (brandId) => {
-    try {
-        const deletedBrand = await Brand.findByIdAndDelete(brandId);
-        if (!deletedBrand) {
-            throw new Error('Brand not found');
+    createBrand = async (brandData) => {
+        try {
+            const existingBrand = await Brand.Model.findOne({ name: brandData.name });
+            if (existingBrand) {
+                return {
+                    isError: true,
+                    codeError: 409,
+                    message: "Brand already exist."
+                };
+            }
+            const newBrand = new Brand.Model(brandData);
+            await newBrand.save();
+            return {
+                isError: false,
+                data: newBrand
+            };
+        } catch (error) {
+            return {
+                isError: true,
+                codeError: 500,
+                message: `(BrandService): Internal server error: ${error}`
+            };
         }
-        return deletedBrand;
-    } catch (error) {
-        throw new Error(error.message);
     }
+
+    updateBrand = async (brandId, brandData) => {
+        try {
+            const updatedBrand = await Brand.Model.findByIdAndUpdate(brandId, brandData, { new: true });
+            if (!updatedBrand) {
+                return {
+                    isError: true,
+                    codeError: 404,
+                    message: 'No brand found with that ID.'
+                };
+            }
+            return {
+                isError: false,
+                data: updatedBrand
+            };
+        } catch (error) {
+            return {
+                isError: true,
+                codeError: 500,
+                message: `(BrandService): Internal server error: ${error}`
+            };
+        }
+    }
+
+    deleteBrand = async (brandId) => {
+        try {
+            const deletedBrand = await Brand.Model.findByIdAndDelete(brandId);
+            if (!deletedBrand) {
+                return {
+                    isError: true,
+                    codeError: 404,
+                    message: 'No brand found with that ID.'
+                };
+            }
+            return {
+                isError: false,
+                data: deletedBrand
+            };
+        } catch (error) {
+            return {
+                isError: true,
+                codeError: 500,
+                message: `(BrandService): Internal server error: ${error}`
+            };
+        }
+    }
+
 }
 
-module.exports = {
-    getAllBrands,
-    getBrandByName,
-    createBrand,
-    updateBrand,
-    deleteBrand
-};
+module.exports = new BrandService();
