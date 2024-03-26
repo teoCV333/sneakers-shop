@@ -1,54 +1,49 @@
 const userService = require('../services/user.service');
+const GenericResponseHandler = require('../util/genericResponse/genericResponseHandler');
+const { returnResponse } = require('../util/genericResponse/genericResponseHandler');
 
-const getAllUsers = async (req, res) => {
-    try {
-        const users = await userService.getAllUsers();
-        res.status(200).json(users);
-    } catch (error) {
-        res.status(500).json({ message: error.message });        
+class UserController {
+
+    constructor() {
+        this.responseHandler = new GenericResponseHandler();
     }
-}
 
-const getUserById = async (req, res) => {
-    try {
+    getAllUsers = async (req, res) => {
+        const data = await userService.getAllUsers();
+        const response = await this.responseHandler.returnResponse(data);
+        res.status(response.httpStatusCode).json(response);
+    };
+
+    getUserById = async (req, res) => {
         const userId = req.params.id;
-        const user = await userService.getUserById(userId);
-        res.status(200).json(user);
-    } catch (error) {
-        res.status(500).json({ message: error.message });        
-    }
-}
+        const data = await userService.getUserById(userId);
+        const response = await this.responseHandler.returnResponse(data);
+        res.status(response.httpStatusCode).json(response);
+    };
 
-const createUser = async (req, res) => {
-    try {
+    createUser = async (req, res) => {
         const userData = req.body;
-        const newUser = await userService.createUser(userData);
-        res.status(201).json(newUser);
-    } catch (error) {
-        res.status(500).json({ message: error.message });        
-    }
-}
+        const data = await userService.createUser(userData);
+        const response = await this.responseHandler.returnResponse(data);
+        res.status(response.httpStatusCode).json(response);
+    };
 
-const updateUser = async (req, res) => {
-    try {
+    updateUser = async (req, res) => {
         const userId = req.params.id;
         const userData = req.body;
-        const updatedUser = await userService.updateUser(userId, userData);
-        res.status(200).json(updatedUser);
-    } catch (error) {
-        res.status(500).json({ message: error.message });        
-    }
-}
+        const data = await userService.updateUser(userId, userData);
+        const response = await this.responseHandler.returnResponse(data);
+        res.status(response.httpStatusCode).json(response);
+    };
 
-const deleteUser = async (req, res) => {
-    try {
+    deleteUser = async (req, res) => {
         const userId = req.params.id;
-        const deletedUser = await userService.deleteUser(productId);
-        res.status(200).json(deletedUser);
-    } catch (error) {
-        res.status(500).json({ message: error.message });        
-    }
+        const data = await userService.deleteUser(productId);
+        const response = await this.responseHandler.returnResponse(data);
+        res.status(response.httpStatusCode).json(response);
+    };
+
 }
 
 
-module.exports = {getAllUsers, getUserById, createUser, updateUser, deleteUser};
+module.exports = new UserController();

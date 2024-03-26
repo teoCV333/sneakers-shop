@@ -1,12 +1,25 @@
 const mongoose = require('mongoose');
 
-const BrandSchema = mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
+class Brand {
+    constructor() {
+        this.initSchema();
     }
-});
 
-const Brand = mongoose.model('Brand', BrandSchema);
+    initSchema() {
+        const brandSchema = mongoose.Schema({
+            name: {
+                type: String,
+                required: true,
+            }
+        });
 
-module.exports = Brand;
+        this.Model = mongoose.model('Brand', brandSchema);
+    }
+
+    getModel() {
+        return this.Model;
+    }
+}
+
+
+module.exports = new Brand();

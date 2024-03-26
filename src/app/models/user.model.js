@@ -1,33 +1,45 @@
 // userPrice.model.js
 const mongoose = require('mongoose');
 
-const PriceSchema = mongoose.Schema({
-    nombre_producto: {
-        type: String,
-        required: true
-    },
-    precio_especial_personal: {
-        type: Number,
-        required: true
+class User {
+    constructor() {
+        this.initSchema();
     }
-});
 
-const UserSchema = mongoose.Schema({
-    id: {
-      type: Number,
-      required: true  
-    },
-    nombre: {
-        type: String,
-        required: true
-    },
-    metadata: {
-        type: {
-            precios_especiales: [PriceSchema]
-        }
+    initSchema() {
+
+        const priceSchema = mongoose.Schema({
+            nombre_producto: {
+                type: String,
+                required: true
+            },
+            precio_especial_personal: {
+                type: Number,
+                required: true
+            }
+        });
+
+        const userSchema = mongoose.Schema({
+            nombre: {
+                type: String,
+                required: true
+            },
+            metadata: {
+                required: false,
+                type: {
+                    precios_especiales: [priceSchema]
+                }
+            }
+        });
+
+        this.Model = mongoose.model('User', userSchema);
+
     }
-});
 
-const UserPrice = mongoose.model('User', UserSchema);
+    getModel() {
+        return this.Model;
+    }
+}
 
-module.exports = UserPrice;
+
+module.exports = new User();

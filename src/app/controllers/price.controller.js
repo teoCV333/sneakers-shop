@@ -1,37 +1,32 @@
 const priceService = require('../services/price.service');
+const { returnResponse } = require('../util/genericResponse/genericResponseHandler');
 
-const validatePrice = async (req, res) => {
-    try {
+class PriceController {
+
+    validatePrice = async (req, res) => {
         const userId = req.params.id;
         const productName = req.params.productName;
-        const price = await priceService.validatePrice(userId, productName);
-        res.status(200).json(price);
-    } catch (error) {
-        res.status(500).json({ message: error.message });        
-    }
-}
+        const data = await priceService.validatePrice(userId, productName);
+        const response = await returnResponse(data);
+        res.status(response.httpStatusCode).json(response);
+    };
 
-const addSpecialPrice = async (req, res) => {
-    try {
+    addSpecialPrice = async (req, res) => {
         const userId = req.params.id;
         const specialPriceData = req.body;
-        const specialPrice = await priceService.addSpecialPrice(userId, specialPriceData);
-        res.status(200).json(specialPrice);
-    } catch (error) {
-        res.status(500).json({ message: error.message });        
-    }
-}
+        const data = await priceService.addSpecialPrice(userId, specialPriceData);
+        const response = await returnResponse(data);
+        res.status(response.httpStatusCode).json(response);
+    };
 
-const deleteSpecialPriceById = async (req, res) => {
-    try {
+    deleteSpecialPriceById = async (req, res) => {
         const userId = req.params.id;
         const productName = req.params.productName;
-        const specialPriceDeleted = await priceService.deleteSpecialPriceById(userId, productName);
-        res.status(200).json(specialPriceDeleted);
-    } catch (error) {
-        res.status(500).json({ message: error.message });        
-    }
+        const data = await priceService.deleteSpecialPriceById(userId, productName);
+        const response = await returnResponse(data);
+        res.status(response.httpStatusCode).json(response);
+    };
+
 }
 
-
-module.exports = {validatePrice, addSpecialPrice, deleteSpecialPriceById};
+module.exports = new PriceController();
